@@ -1,0 +1,34 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build-test-migrate:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: dev
+          POSTGRES_PASSWORD: ci-secret
+          POSTGRES_DB: fin_smart
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U dev -d fin_smart"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      ConnectionStrings__SmeAccounting: Host=localhost;Port=5432;Database=fin_smart;Username=dev;Password=ci-secret
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+      - run: dotnet build SmeAccounting.slnx --nologo
+      - run: dotnet test SmeAccounting.slnx --no-build --nologo
+      - run: dotnet ef database update --project src/2.Infrastructure/SmeAccounting.Persistence/SmeAccounting.Persistence.csproj --startup-project src/3.Presentation/SmeAccounting.Api/SmeAccounting.Api.csproj

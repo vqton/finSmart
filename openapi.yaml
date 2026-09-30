@@ -1,0 +1,269 @@
+openapi: 3.1.0
+info:
+  title: SmeAccounting API
+  version: 1.0.0
+  description: SME Accounting System (TT99/2025/TT-BTC & Decree 123). Clean Architecture + API-First. Agnostic UI consumes this contract only.
+servers:
+  - url: /
+    description: Local
+tags:
+  - name: Accounts
+    description: TT99 Chart of Accounts
+  - name: JournalEntries
+    description: General ledger vouchers (double-entry)
+paths:
+  /api/v1/accounts:
+    get:
+      tags: [Accounts]
+      summary: List accounts
+      operationId: listAccounts
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/PageSizeParam'
+        - name: search
+          in: query
+          schema: { type: string }
+      responses:
+        '200':
+          description: Paged accounts
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PagedAccountListDto'
+        '400': { $ref: '#/components/responses/BadRequest' }
+  /api/v1/accounts/{id}:
+    get:
+      tags: [Accounts]
+      summary: Get account by id
+      operationId: getAccountById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '200':
+          description: Account detail
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseAccountDto'
+        '404': { $ref: '#/components/responses/NotFound' }
+  /api/v1/journal-entries:
+    get:
+      tags: [JournalEntries]
+      summary: List journal entries
+      operationId: listJournalEntries
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/PageSizeParam'
+        - name: fromPostingDate
+          in: query
+          schema: { type: string, format: date }
+        - name: toPostingDate
+          in: query
+          schema: { type: string, format: date }
+      responses:
+        '200':
+          description: Paged entries
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PagedJournalEntryDto'
+        '400': { $ref: '#/components/responses/BadRequest' }
+    post:
+      tags: [JournalEntries]
+      summary: Create draft journal entry
+      operationId: createJournalEntry
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostJournalEntryRequest'
+      responses:
+        '201':
+          description: Created draft
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseJournalEntryDto'
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '422': { $ref: '#/components/responses/Unprocessable' }
+  /api/v1/journal-entries/{id}:
+    get:
+      tags: [JournalEntries]
+      summary: Get journal entry by id
+      operationId: getJournalEntryById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '200':
+          description: Entry detail
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseJournalEntryDto'
+        '404': { $ref: '#/components/responses/NotFound' }
+  /api/v1/journal-entries/{id}:post:
+    post:
+      tags: [JournalEntries]
+      summary: Post draft entry (debits must equal credits, period must be open)
+      operationId: postJournalEntry
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '200':
+          description: Posted entry
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseJournalEntryDto'
+        '404': { $ref: '#/components/responses/NotFound' }
+        '422': { $ref: '#/components/responses/Unprocessable' }
+  /api/v1/journal-entries/{id}:void:
+    post:
+      tags: [JournalEntries]
+      summary: Void posted entry (soft-delete, creates reversal reference)
+      operationId: voidJournalEntry
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VoidJournalEntryRequest'
+      responses:
+        '200':
+          description: Voided entry
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseJournalEntryDto'
+        '404': { $ref: '#/components/responses/NotFound' }
+        '422': { $ref: '#/components/responses/Unprocessable' }
+components:
+  parameters:
+    PageParam:
+      name: page
+      in: query
+      schema: { type: integer, minimum: 1, default: 1 }
+    PageSizeParam:
+      name: pageSize
+      in: query
+      schema: { type: integer, minimum: 1, maximum: 100, default: 20 }
+  responses:
+    BadRequest:
+      description: Validation failed (RFC 7807)
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/ProblemDetails' }
+    NotFound:
+      description: Not found (RFC 7807)
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/ProblemDetails' }
+    Unprocessable:
+      description: Domain invariant violated, e.g. GL.UNBALANCED, ACCOUNT.CLOSED_PERIOD (RFC 7807)
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/ProblemDetails' }
+  schemas:
+    AccountListDto:
+      type: object
+      required: [id, code, name, isDetail, isActive]
+      properties:
+        id: { type: string, format: uuid }
+        code: { type: string, example: '131.1' }
+        name: { type: string }
+        isDetail: { type: boolean }
+        isActive: { type: boolean }
+    AccountDto:
+      allOf:
+        - $ref: '#/components/schemas/AccountListDto'
+        - type: object
+          properties:
+            parentCode: { type: string, nullable: true }
+    JournalLineDto:
+      type: object
+      required: [accountCode, debitAmount, creditAmount]
+      properties:
+        accountCode: { type: string, example: '111' }
+        debitAmount: { type: number, format: decimal, example: 1000000 }
+        creditAmount: { type: number, format: decimal, example: 0 }
+        description: { type: string, nullable: true }
+    JournalEntryDto:
+      type: object
+      required: [id, voucherNo, postingDate, status, lines]
+      properties:
+        id: { type: string, format: uuid }
+        voucherNo: { type: string, example: 'CT-2026-0001' }
+        postingDate: { type: string, format: date }
+        status: { type: string, enum: [Draft, Posted, Voided] }
+        lines:
+          type: array
+          items: { $ref: '#/components/schemas/JournalLineDto' }
+    PostJournalEntryRequest:
+      type: object
+      required: [voucherNo, postingDate, lines]
+      properties:
+        voucherNo: { type: string, maxLength: 30 }
+        postingDate: { type: string, format: date }
+        lines:
+          type: array
+          minItems: 2
+          items: { $ref: '#/components/schemas/JournalLineDto' }
+    VoidJournalEntryRequest:
+      type: object
+      properties:
+        reason: { type: string, maxLength: 500 }
+    ApiResponseAccountDto:
+      type: object
+      required: [data]
+      properties:
+        data: { $ref: '#/components/schemas/AccountDto' }
+    ApiResponseJournalEntryDto:
+      type: object
+      required: [data]
+      properties:
+        data: { $ref: '#/components/schemas/JournalEntryDto' }
+    PagedAccountListDto:
+      type: object
+      required: [items, page, pageSize, totalCount]
+      properties:
+        items:
+          type: array
+          items: { $ref: '#/components/schemas/AccountListDto' }
+        page: { type: integer }
+        pageSize: { type: integer }
+        totalCount: { type: integer }
+    PagedJournalEntryDto:
+      type: object
+      required: [items, page, pageSize, totalCount]
+      properties:
+        items:
+          type: array
+          items: { $ref: '#/components/schemas/JournalEntryDto' }
+        page: { type: integer }
+        pageSize: { type: integer }
+        totalCount: { type: integer }
+    ProblemDetails:
+      type: object
+      properties:
+        type: { type: string }
+        title: { type: string }
+        status: { type: integer }
+        detail: { type: string }
+        traceId: { type: string }
+        errorCode:
+          type: string
+          example: GL.UNBALANCED
