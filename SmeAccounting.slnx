@@ -1,0 +1,19 @@
+<Solution>
+  <Folder Name="/src/" />
+  <Folder Name="/src/1.Core/">
+    <Project Path="src/1.Core/SmeAccounting.Application/SmeAccounting.Application.csproj" />
+    <Project Path="src/1.Core/SmeAccounting.Domain/SmeAccounting.Domain.csproj" />
+  </Folder>
+  <Folder Name="/src/2.Infrastructure/">
+    <Project Path="src/2.Infrastructure/SmeAccounting.Infrastructure/SmeAccounting.Infrastructure.csproj" />
+    <Project Path="src/2.Infrastructure/SmeAccounting.Persistence/SmeAccounting.Persistence.csproj" />
+  </Folder>
+  <Folder Name="/src/3.Presentation/">
+    <Project Path="src/3.Presentation/SmeAccounting.Api/SmeAccounting.Api.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/SmeAccounting.ApiTests/SmeAccounting.ApiTests.csproj" />
+    <Project Path="tests/SmeAccounting.IntegrationTests/SmeAccounting.IntegrationTests.csproj" />
+    <Project Path="tests/SmeAccounting.UnitTests/SmeAccounting.UnitTests.csproj" />
+  </Folder>
+</Solution>

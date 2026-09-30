@@ -1,0 +1,17 @@
+/home/projects/finSmart/src/2.Infrastructure/SmeAccounting.Infrastructure/bin/Debug/net10.0/SmeAccounting.Infrastructure.deps.json
+/home/projects/finSmart/src/2.Infrastructure/SmeAccounting.Infrastructure/bin/Debug/net10.0/SmeAccounting.Infrastructure.dll
+/home/projects/finSmart/src/2.Infrastructure/SmeAccounting.Infrastructure/bin/Debug/net10.0/SmeAccounting.Infrastructure.pdb
+/home/projects/finSmart/src/2.Infrastructure/SmeAccounting.Infrastructure/bin/Debug/net10.0/SmeAccounting.Application.dll
+/home/projects/finSmart/src/2.Infrastructure/SmeAccounting.Infrastructure/bin/Debug/net10.0/SmeAccounting.Domain.dll
+/home/projects/finSmart/src/2.Infrastructure/SmeAccounting.Infrastructure/bin/Debug/net10.0/SmeAccounting.Application.pdb
+/home/projects/finSmart/src/2.Infrastructure/SmeAccounting.Infrastructure/bin/Debug/net10.0/SmeAccounting.Domain.pdb
+/home/projects/finSmart/src/2.Infrastructure/SmeAccounting.Infrastructure/obj/Debug/net10.0/SmeAccounting.Infrastructure.csproj.AssemblyReference.cache
+/home/projects/finSmart/src/2.Infrastructure/SmeAccounting.Infrastructure/obj/Debug/net10.0/SmeAccounting.Infrastructure.GeneratedMSBuildEditorConfig.editorconfig
+/home/projects/finSmart/src/2.Infrastructure/SmeAccounting.Infrastructure/obj/Debug/net10.0/SmeAccounting.Infrastructure.AssemblyInfoInputs.cache
+/home/projects/finSmart/src/2.Infrastructure/SmeAccounting.Infrastructure/obj/Debug/net10.0/SmeAccounting.Infrastructure.AssemblyInfo.cs
+/home/projects/finSmart/src/2.Infrastructure/SmeAccounting.Infrastructure/obj/Debug/net10.0/SmeAccounting.Infrastructure.csproj.CoreCompileInputs.cache
+/home/projects/finSmart/src/2.Infrastructure/SmeAccounting.Infrastructure/obj/Debug/net10.0/SmeAccou.A63A2A0A.Up2Date
+/home/projects/finSmart/src/2.Infrastructure/SmeAccounting.Infrastructure/obj/Debug/net10.0/SmeAccounting.Infrastructure.dll
+/home/projects/finSmart/src/2.Infrastructure/SmeAccounting.Infrastructure/obj/Debug/net10.0/refint/SmeAccounting.Infrastructure.dll
+/home/projects/finSmart/src/2.Infrastructure/SmeAccounting.Infrastructure/obj/Debug/net10.0/SmeAccounting.Infrastructure.pdb
+/home/projects/finSmart/src/2.Infrastructure/SmeAccounting.Infrastructure/obj/Debug/net10.0/ref/SmeAccounting.Infrastructure.dll
